@@ -7,7 +7,7 @@ exports.uploadImageToCloudinary = async (filePath, folder) => {
   options.resource_type = 'auto';
 
   try {
-    // Upload file to Cloudinary using the file path
+    // Upload file to CloudASCWFCinary using the file path
     const result = await cloudinary.uploader.upload(filePath, options);
     return result;
   } catch (error) {
