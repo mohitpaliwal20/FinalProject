@@ -49,10 +49,10 @@ exports.insertProduct = async (req, res) => {
     }
 
     // Validate product data
-    const { productName, description, price, stockQuantity } = req.body;
+    const { comanyNAme,productName, description, price, stockQuantity } = req.body;
     // console.log(req.body);
     
-    if (!productName || !description || !price || !stockQuantity) {
+    if (!productName || !description || !price || !stockQuantity||!comanyNAme) {
       return res.status(400).json({
         success: false,
         message: "All fields (productName, description, price, stockQuantity) are required",
@@ -66,16 +66,24 @@ exports.insertProduct = async (req, res) => {
         message: "Price and stock quantity must be numbers",
       });
     }
+    // make a db call to get the company id by company name
+    const [companyResults] = await pool.query("select * from company where company_name=?",[comanyNAme])
+    if(companyResults.length===0){
+      return res.status(400).json({
+        success: false,
+        message: "company not found",
+      });
+    }
 
     // Step 2: Insert product into the database
     const query = `
-      INSERT INTO products (product_name, description, price, stock_quantity returning  product_id, url)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO products (company_id,product_name, description, price, stock_quantity returning  product_id, url)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
 
     const connection = await pool.getConnection();
     try {
-      const [results] = await connection.execute(query, [productName, description, price, stockQuantity, imageUrl]);
+      const [results] = await connection.execute(query, [companyResults,productName, description, price, stockQuantity, imageUrl]);
       // const [response]=await connection.execute("select * from products where product_id=?",[results.insertId])
       // console.log("gettying resonsd ::",response);
       
