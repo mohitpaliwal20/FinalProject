@@ -173,7 +173,7 @@ exports.getModels = async (req, res) => {
       });
     }
     // Validate model data
-    const { companyName } = req.body;
+    const { companyName } = req.query;
     if (!companyName) {
       return res.status(400).json({
         success: false,

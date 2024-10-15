@@ -27,7 +27,7 @@ exports.addCompany = async (req, res) => {
       });
     }
     // Check if the company already exists
-    const [companyRows] = await pool.query('SELECT * FROM companies WHERE companyName = ?', [companyName]);
+    const [companyRows] = await pool.query('SELECT * FROM companies WHERE company_name = ?', [companyName]);
     if (companyRows.length > 0) {
       return res.status(400).json({
         success: false,
@@ -36,7 +36,7 @@ exports.addCompany = async (req, res) => {
     }
     // Insert company into database with created at timestamp
     await pool.query(
-      'INSERT INTO companies (companyName, email, phone, created_at) VALUES (?, ?, ?, NOW())',
+      'INSERT INTO companies (company_name, company_email, company_phone, created_at) VALUES (?, ?, ?, NOW())',
       [companyName, email, phone]
     );
     return res.status(201).json({
@@ -80,7 +80,7 @@ exports.updateCompany = async (req, res) => {
       });
     }
     // Check if the company exists
-    const [companyRows] = await pool.query('SELECT * FROM companies WHERE companyName = ?', [companyName]);
+    const [companyRows] = await pool.query('SELECT * FROM companies WHERE company_name = ?', [companyName]);
     if (companyRows.length === 0) {
       return res.status(404).json({
         success: false,
@@ -89,7 +89,7 @@ exports.updateCompany = async (req, res) => {
     }
     // Update company details
     await pool.query(
-      'UPDATE companies SET email = ?, phone = ? WHERE companyName = ?',
+      'UPDATE companies SET company_email = ?, company_phone = ? WHERE company_name = ?',
       [email, phone, companyName]
     );
     return res.status(200).json({
@@ -119,6 +119,8 @@ exports.deleteCompany = async (req, res) => {
     }
     // Validate company data
     const { companyName } = req.body;
+    console.log(companyName);
+    
     if (!companyName) {
       return res.status(400).json({
         success: false,
@@ -126,7 +128,7 @@ exports.deleteCompany = async (req, res) => {
       });
     }
     // Check if the company exists
-    const [companyRows] = await pool.query('SELECT * FROM companies WHERE companyName = ?', [companyName]);
+    const [companyRows] = await pool.query('SELECT * FROM companies WHERE company_name = ?', [companyName]);
     if (companyRows.length === 0) {
       return res.status(404).json({
         success: false,
@@ -134,7 +136,7 @@ exports.deleteCompany = async (req, res) => {
       });
     }
     // Delete company
-    await pool.query('DELETE FROM companies WHERE companyName = ?', [companyName]);
+    await pool.query('DELETE FROM companies WHERE company_name = ?', [companyName]);
     return res.status(200).json({
       success: true,
       message: "Company deleted successfully",
