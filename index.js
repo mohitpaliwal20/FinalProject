@@ -8,6 +8,7 @@ const {cloudinaryConnect}=require("./config/cloudinary")
 const storeRoutes=require("./routes/store");
 const companyRoutes=require("./routes/Company");
 const modelRoutes=require("./routes/Model");
+const RatingRoutes=require("./routes/Rating");
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,7 @@ app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/store",storeRoutes);
 app.use("/api/v1/company",companyRoutes);
 app.use("/api/v1/model",modelRoutes);
+app.use("/api/v1/rating",RatingRoutes);
 console.log("Hello, we are from the index page after");
 app.get("/", (req, res) => {
   return res.json({

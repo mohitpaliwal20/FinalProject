@@ -1,6 +1,7 @@
 const mysql = require('mysql2/promise');
 require("dotenv").config();
 
+
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -95,8 +96,10 @@ exports.updateCompany = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Company updated successfully",
-    });
-  } catch (error) {
+    })
+    
+  } 
+  catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,

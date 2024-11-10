@@ -24,39 +24,11 @@ exports.auth = async (req, res, next) => {
       });
     }
 
-    // Verify the token
-    try {
-      const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Get connection from pool
-      const connection = await pool.getConnection();
-      
-      try {
-        // Query to get user details
-        const [userResults] = await connection.query(
-          'SELECT * FROM user WHERE email = ?',
-          [decoded.email]
-        );
-
-        if (userResults.length === 0) {
-          return res.status(401).json({
-            success: false,
-            message: "Token is invalid",
-          });
-        }
-
-        req.user = userResults[0];
+    
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
         next();
-      } finally {
-        connection.release();
-      }
-    } catch (error) {
-      // Token verification issue
-      return res.status(401).json({
-        success: false,
-        message: "Token is invalid",
-      });
-    }
+   
   } catch (error) {
     return res.status(500).json({
       success: false,
