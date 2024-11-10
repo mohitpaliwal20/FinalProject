@@ -5,9 +5,9 @@ const { promisePool } = require('./config/database');
 exports.addCart = async (req, res) => {
   try {
     const user_id = req.user.id;  // Assuming `req.user.id` contains the authenticated user's ID
-    const { productname, quantity } = req.body;
+    const { productname, quantity,price } = req.body;
 
-    if (!productname || !quantity) {
+    if (!productname || !quantity||!price) {
       return res.status(400).json({
         success: false,
         message: 'Invalid input',
@@ -36,8 +36,8 @@ exports.addCart = async (req, res) => {
 
     // Insert product into the cart
     await promisePool.query(
-      'INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)',
-      [user_id, product_id, quantity]
+      'INSERT INTO cart (user_id, productname, quantity,price) VALUES (?, ?, ?,?)',
+      [user_id, productname, quantity,price]
     );
 
     return res.status(201).json({
@@ -76,7 +76,7 @@ exports.getCart = async (req, res) => {
 exports.updateCart = async (req, res) => {
   try {
     const user_id = req.user.id;
-    const { quantity, product_id } = req.body;
+    const { quantity, productname } = req.body;
 
     if (!quantity) {
       return res.status(400).json({
@@ -86,7 +86,7 @@ exports.updateCart = async (req, res) => {
     }
 
     // Check if product exists and has enough stock
-    const [product] = await promisePool.query('SELECT * FROM inventory WHERE id = ?', [product_id]);
+    const [product] = await promisePool.query('SELECT * FROM inventory WHERE productName = ?', [productname]);
     if (product.length === 0) {
       return res.status(404).json({
         success: false,

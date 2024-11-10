@@ -95,6 +95,9 @@ exports.signUp = async (req, res) => {
       otp,
       address,
       usertype,
+      city,
+      state,
+      pincode,
     } = req.body;
 
     // Validate input
@@ -104,10 +107,13 @@ exports.signUp = async (req, res) => {
       !email ||
       !password ||
       !confirmPassword ||
-      !otp,
-      !phone_number,
-      !address,
-      !usertype
+      !otp ||
+      !phone_number ||
+      !address ||
+      !usertype ||
+      !city ||
+      !state ||
+      !pincode
     ) {
       return res.status(403).json({
         success: false,
@@ -133,14 +139,10 @@ exports.signUp = async (req, res) => {
     }
 
     // Find the most recent OTP for the email
-   // Find the most recent OTP for the email
-// Find the most recent OTP for the email
-const [recentOTPRows] = await pool.query(
-  'SELECT otp FROM otp_verification WHERE email = ? ORDER BY created_at DESC LIMIT 1',
-  [email]
-);
-
-
+    const [recentOTPRows] = await pool.query(
+      'SELECT otp FROM otp_verification WHERE email = ? ORDER BY created_at DESC LIMIT 1',
+      [email]
+    );
 
     if (recentOTPRows.length === 0) {
       // OTP not found
@@ -167,9 +169,9 @@ const [recentOTPRows] = await pool.query(
     // Insert user into the database
     const [result] = await pool.query(
       `INSERT INTO user 
-        (first_name, last_name, email, password, user_type, phone_number, address,profile_pic,reg_date) 
-      VALUES (?, ?, ?, ?, ?, ?,?,?, NOW())`,
-      [firstName, lastName, email, hashedPassword, usertype,phone_number ,address,imageLink]
+        (first_name, last_name, email, password, user_type, phone_number, address, city, state, pincode, profile_pic, reg_date,type) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),?)`,
+      [firstName, lastName, email, hashedPassword, usertype, phone_number, address, city, state, pincode, imageLink,type]
     );
 
     // Get inserted user details
@@ -191,6 +193,7 @@ const [recentOTPRows] = await pool.query(
     });
   }
 };
+
 
 // login function
 
