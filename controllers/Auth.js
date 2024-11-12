@@ -169,9 +169,9 @@ exports.signUp = async (req, res) => {
     // Insert user into the database
     const [result] = await pool.query(
       `INSERT INTO user 
-        (first_name, last_name, email, password, user_type, phone_number, address, city, state, pincode, profile_pic, reg_date,type) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(),?)`,
-      [firstName, lastName, email, hashedPassword, usertype, phone_number, address, city, state, pincode, imageLink,type]
+        (first_name, last_name, email, password, user_type, phone_number, address, city, state, pincode, profile_pic, reg_date) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+      [firstName, lastName, email, hashedPassword, usertype, phone_number, address, city, state, pincode, imageLink]
     );
 
     // Get inserted user details
@@ -190,6 +190,7 @@ exports.signUp = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "User cannot be registered, Please try again",
+      error:error.message
     });
   }
 };
